@@ -146,7 +146,7 @@ class SudokuGenerator:
             print(no_dup_col_count, "columns without duplicates!")
         
         #print(rand_num_2D_grid)
-        
+        self.board_for_solver = rand_num_2D_grid
         ##remove cells
         #print(removed_cells)
         for i in range(removed_cells_copy - sum(x.count(0) for x in rand_num_2D_grid)):
@@ -165,10 +165,10 @@ class SudokuGenerator:
                 #print("Popped location:", rand_num1, rand_num2)
    
             
-        self.board = rand_num_2D_grid
+        self.board_for_user = rand_num_2D_grid
         print(rand_num_2D_grid)
         print("2D Grid # of 0s:", sum(x.count(0) for x in rand_num_2D_grid))
-    """
+    
     '''
 	Returns a 2D python list of numbers which represents the board
 
@@ -176,7 +176,8 @@ class SudokuGenerator:
 	Return: list[list]
     '''
     def get_board(self):
-        pass
+        return self.board_for_user
+        return self.board_for_solver
 
     '''
 	Displays the board to the console
@@ -186,8 +187,9 @@ class SudokuGenerator:
 	Return: None
     '''
     def print_board(self):
-        pass
-
+        print(self.board_for_user)
+        print(self.board_for_solver)
+    
     '''
 	Determines if num is contained in the specified row (horizontal) of the board
     If num is already in the specified row, return False. Otherwise, return True
@@ -199,8 +201,14 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_row(self, row, num):
-        pass
-
+            for i in range(len(self.board_for_solver)):
+                for j in range(len(self.board_for_solver)):
+                    if self.board_for_solver[row][j] == num:
+                        return True
+                    else:
+                        return False
+                    
+                        
     '''
 	Determines if num is contained in the specified column (vertical) of the board
     If num is already in the specified col, return False. Otherwise, return True
@@ -212,7 +220,12 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_col(self, col, num):
-        pass
+        for i in range(len(self.board_for_solver)):
+            for j in range(len(self.board_for_solver)):
+                if self.board_for_solver[col][j] == num:
+                    return True
+                else:
+                    return False
 
     '''
 	Determines if num is contained in the 3x3 box specified on the board
@@ -353,7 +366,6 @@ def generate_sudoku(size, removed):
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
-"""
+
 "test functions"
 SG = SudokuGenerator(2,2)
-#SG.__init__(3,4)
