@@ -31,7 +31,7 @@ class SudokuGenerator:
         no_dup_col_count = 0
         rand_num_row = []
         rand_num_col = []
-        removed_cells_copy = removed_cells
+        self.removed_cells_copy = removed_cells
         
         ##create sudoku number list
         while no_dup_col_count != row_length:
@@ -147,27 +147,6 @@ class SudokuGenerator:
         
         #print(rand_num_2D_grid)
         self.board_for_solver = rand_num_2D_grid
-        ##remove cells
-        #print(removed_cells)
-        for i in range(removed_cells_copy - sum(x.count(0) for x in rand_num_2D_grid)):
-            rand_num1 = random.randrange(0,row_length)
-            rand_num2 = random.randrange(0,row_length)
-            
-            #only remove cell if it has not already been removed
-            while rand_num_2D_grid[rand_num1][rand_num2] == 0:
-                rand_num1 = random.randrange(0,row_length)
-                rand_num2 = random.randrange(0,row_length)
-                if rand_num_2D_grid[rand_num1][rand_num2] != 0:
-                    rand_num_2D_grid[rand_num1][rand_num2] = 0
-                    break
-            else:
-                rand_num_2D_grid[rand_num1][rand_num2] = 0
-                #print("Popped location:", rand_num1, rand_num2)
-   
-            
-        self.board_for_user = rand_num_2D_grid
-        print(rand_num_2D_grid)
-        print("2D Grid # of 0s:", sum(x.count(0) for x in rand_num_2D_grid))
     
     '''
 	Returns a 2D python list of numbers which represents the board
@@ -176,7 +155,6 @@ class SudokuGenerator:
 	Return: list[list]
     '''
     def get_board(self):
-        return self.board_for_user
         return self.board_for_solver
 
     '''
@@ -187,7 +165,6 @@ class SudokuGenerator:
 	Return: None
     '''
     def print_board(self):
-        print(self.board_for_user)
         print(self.board_for_solver)
     
     '''
@@ -201,12 +178,14 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_row(self, row, num):
-            for i in range(len(self.board_for_solver)):
-                for j in range(len(self.board_for_solver)):
-                    if self.board_for_solver[row][j] == num:
-                        return True
-                    else:
-                        return False
+        i = 0
+        j = 0
+        for i in range(len(self.board_for_solver)):
+            for j in range(len(self.board_for_solver)):
+                if self.board_for_solver[row][j] == num:
+                    return True
+                else:
+                    return False
                     
                         
     '''
@@ -220,6 +199,8 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_col(self, col, num):
+        i = 0
+        j = 0
         for i in range(len(self.board_for_solver)):
             for j in range(len(self.board_for_solver)):
                 if self.board_for_solver[col][j] == num:
@@ -240,7 +221,14 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_box(self, row_start, col_start, num):
-        pass
+        i = 0
+        j = 0
+        for i in range(3):
+            for j in range(3):
+                if self.board_for_solver[row_start+i][col_start+j] == num:
+                    return False
+                else: return True
+                
     
     '''
     Determines if it is valid to enter num at (row, col) in the board
@@ -253,7 +241,10 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def is_valid(self, row, col, num):
-        pass
+        if self.valid_in_box == True and self.valid_in_col == True and self.valid_in_row == True:
+            return True
+        else: return False
+        
 
     '''
     Fills the specified 3x3 box with values
@@ -267,7 +258,7 @@ class SudokuGenerator:
     '''
     def fill_box(self, row_start, col_start):
         pass
-    
+        
     '''
     Fills the three boxes along the main diagonal of the board
     These are the boxes which start at (0,0), (3,3), and (6,6)
@@ -342,7 +333,24 @@ class SudokuGenerator:
 	Return: None
     '''
     def remove_cells(self):
-        pass
+        ##remove cells
+        #print(self.removed_cells)
+        for i in range(self.removed_cells_copy - sum(x.count(0) for x in self.board_for_solver)):
+            rand_num1 = random.randrange(0,self.row_length)
+            rand_num2 = random.randrange(0,self.row_length)
+            
+            #only remove cell if it has not already been removed
+            while self.board_for_solver[rand_num1][rand_num2] == 0:
+                rand_num1 = random.randrange(0,self.row_length)
+                rand_num2 = random.randrange(0,self.row_length)
+                if self.board_for_solver[rand_num1][rand_num2] != 0:
+                    self.board_for_solver[rand_num1][rand_num2] = 0
+                    break
+            else:
+                self.board_for_solver[rand_num1][rand_num2] = 0
+                #print("Popped location:", rand_num1, rand_num2)
+   
+            self.board_for_user = self.board_for_solver
 
 '''
 DO NOT CHANGE
@@ -361,11 +369,18 @@ Return: list[list] (a 2D Python list to represent the board)
 '''
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
+    
+    #comment print board out when finished changing sudoku_generator.py
+    sudoku.print_board()
+    
     sudoku.fill_values()
     board = sudoku.get_board()
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
 
+    
+
 "test functions"
-SG = SudokuGenerator(2,2)
+#SG = SudokuGenerator(2,2)
+generate_sudoku(9,30)
