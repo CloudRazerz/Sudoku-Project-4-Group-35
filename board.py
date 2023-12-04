@@ -1,3 +1,5 @@
+import pygame, sys
+
 class Board:
 
     def __init__(self, width, height, screen, difficulty):
@@ -5,6 +7,7 @@ class Board:
         self.height = height
         self.screen =screen
         self.difficulty = difficulty
+        pygame.init() #Dont know if this goes here or not but we will see
 
     def draw(self):
         pass
