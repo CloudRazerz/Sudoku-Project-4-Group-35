@@ -219,7 +219,7 @@ boolean (whether or not we could solve the board)
     def generate_sudoku(self, size, removed):
 
         # comment print board out when finished changing sudoku_generator.py
-        self.print_board()
+        #self.print_board()
 
         self.fill_values()
         board = self.get_board()
@@ -294,36 +294,36 @@ Return: None
                 j = 0
                 while j < self.row_length:
                     num_zeros = sum(x.count(0) for x in self.board)
-                    print("numzero" + str(num_zeros))
+                    #print("numzero" + str(num_zeros))
                     if num_zeros == 0:
                         return self.board
-                    print(self.board)
+                    #print(self.board)
                     # print("while loop 2")
-                    print(i, j)
+                    #print(i, j)
                     if self.board[i][j] == 0:
                         if backtrack:
-                            print("worked again")
+                            #print("worked again")
                             # self.board[i][j] += 1
                             backtrack = False
                             # continue
-                        print(f"zero found at {i},{j}")
+                        #print(f"zero found at {i},{j}")
                         k = 1
                         for k in range(1,10):
-                            print("for loop k " + str(k))
+                            #print("for loop k " + str(k))
                             if self.valid_in_col(j, k):
                                 if self.valid_in_row(i, k):
-                                    print("valid col")
+                                    #print("valid col")
                                     #if self.valid_in_row(i, k):
-                                    print("valid row")
-                                    # print("is_valid")
+                                    #print("valid row")
+                                    #print("is_valid")
 
-                                    print("self.board")
+                                    #print("self.board")
                                     self.board[i][j] = k
                                    # break
                                 # test
                                # if self.board[i][j] != board_for_solver_copy:
                                 #    print("works")
-                                    print( "new board " + str(self.board))
+                                    #print( "new board " + str(self.board))
                                     break
                             #if k == self.row_length - 1:
                              #   backtrack = True
@@ -343,7 +343,7 @@ Return: None
                 else:
                     i -= 1
 
-                print("check")
+                #print("check")
                 if i == -1:
                     i = self.row_length - 1
                 elif i == 9:
@@ -351,7 +351,7 @@ Return: None
 
             # print("Zeros found:", zeros_found)
 
-        print(self.board)
+        #print(self.board)
 
 
 '''
@@ -373,18 +373,13 @@ Return: list[list] (a 2D Python list to represent the board)
 
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
-   # sudoku.fill_in_sudoku()
+    #sudoku.fill_in_sudoku()
 
-    # comment print board out when finished changing sudoku_generator.py
-    sudoku.print_board()
+    #comment print board out when finished changing sudoku_generator.py
+    #sudoku.print_board()
 
     sudoku.fill_values()
     board = sudoku.get_board()
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
-
-
-"test function"
-# SG = SudokuGenerator(2,2)
-#generate_sudoku(9, 30)
