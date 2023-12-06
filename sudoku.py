@@ -7,24 +7,16 @@ pygame.font.init()
 screen = pygame.display.set_mode((540, 600))  # (9x60),(9x60+60) (more height for bottom buttons)
 pygame.display.set_caption("Sudoku")
 diff = 60
+
 # Game States
 running = True if __name__ == "__main__" else False
-game_state = 0
-"""
-0 = main menu
-1 = in-game
-2 = game over
-3 = win
-"""
-difficulty = 0
-"""
-0 = easy
-1 = medium
-2 = hard
-"""
-board = None
-default = []
-select = [4, 4, 0, False]  # [x_coordinate, y_coordinate, typed-value, locked or not]
+game_state = 0 # 0 = main menu, 1 = in-game, 2 = game over, 3 = win
+difficulty = 0 # 0 = easy(30 removed), 1 = medium(40 removed), 2 = hard(50 removed)
+
+#Board and Select
+board = []
+default = [] #copy of board, except 0 = empty cell, 1 = default cell, 2 = typed and confirmed cell
+select = [4, 4, 0, False]  # [x_coordinate, y_coordinate, value, confirmed or not]
 
 # GUI Elements
 main_font = pygame.font.Font(None, 80)
@@ -114,14 +106,15 @@ def mouse_in_button(mouse_pos, positions, position):
 #             pygame.time.delay(50)
 #     return False
 
-def is_full(board):
-    for row in board:
-        for col in row:
-            if col == 0:
+#Checks if board is full, checks default to make sure everything is confirmed
+def is_full(board, default):
+    for row in range(len(board)):
+        for col in range(len(board[row])):
+            if board[row][col] == 0 and default[row][col] == 0:
                 return False
-    print("hi")
     return True
 
+#Checks if board is solved
 def is_correct(board):
     cols = []
     box = []
@@ -131,7 +124,6 @@ def is_correct(board):
         for row1 in board:
             cols[i].add(row1[i])
 
-    
     track = 0
     for row_start in range(0,7,3):
         for col_start in range(0,7,3):
@@ -141,11 +133,8 @@ def is_correct(board):
                     box[track].add(board[row_start+j][col_start+k])
             track += 1
 
-    
-    for l in range(len(board)):
-        rows.append(set())
-        for val in board[l]:
-            rows[l].add(val)
+    for row in board:
+        rows.append(set(row))
 
     
     for check in [cols, box, rows]:
@@ -156,6 +145,7 @@ def is_correct(board):
                 return False
     return True
 
+#Draws Numbers and Grid Lines
 def drawlines(board):
     screen.fill("white")
     for i in range(9):
@@ -175,7 +165,7 @@ def drawlines(board):
         pygame.draw.line(screen, (0, 0, 255), (0, l * diff), (540, l * diff), thick)
         pygame.draw.line(screen, (0, 0, 255), (l * diff, 0), (l * diff, 540), thick)
 
-
+#Converts mouse_pos into x = col, z = row
 def cord(pos):
     global x
     x = pos[0]//diff
@@ -190,6 +180,7 @@ def cord(pos):
 #         text1 = sub_font.render(value, 1, (0, 255, 255))
 #     screen.blit(text1, (x * diff + 15, z * diff + 15))
 
+#Highlights selected box with black or red
 def highlightbox(color):
     global x
     global z
@@ -201,16 +192,28 @@ def highlightbox(color):
         pygame.draw.line(screen, color, ((x + k) * diff, z * diff), ((x + k) * diff, z * diff + diff), 7)
 
 
-# Game Loop
+#Game Loop
 while running:
-    keys = pygame.key.get_pressed()
+
+    #Collects mouse data
     mouse_pos = pygame.mouse.get_pos()
+
+    #Reset Background
     screen.fill("white")
+
+    #Collects key and exit data
     for event in pygame.event.get():
+
+        #Exit Game
         if event.type == pygame.QUIT:
             running = False
+
+        #Key Press
         if event.type == pygame.KEYDOWN:
+            #Key Presses only apply when in-game
             if game_state == 1:
+
+                #Moves select coordinates
                 select1_temp = select[0:2]
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     if select[1] > 0:
@@ -233,21 +236,24 @@ while running:
                         select[0] += 1
                         select[2] = None
                 if select1_temp != select[0:2]:
-                    print("selected", select[0:2])
                     x = select[1]
                     z = select[0]
                     select[3] = True
+
+
+                #Confirms the number in selected box
                 if event.key == pygame.K_RETURN:
-                    if select[2] != 0:
-                        print("confirmed", select[2], "at", select[0:2])
+                    if select[2] != 0 and board[select[1]][select[0]] != 0:
                         select[3] = False
                         default[select[1]][select[0]] = 2
-                        if is_full(board):
+                        if is_full(board, default):
                             if is_correct(board):
                                 game_state = 3
                             else:
                                 game_state = 2
 
+
+                #Sketches number into selected cell
                 select2_temp = select[2]
                 if event.key == pygame.K_BACKSPACE or event.key == pygame.K_0 or event.key == pygame.K_KP_0:
                     select[2] = 0
@@ -272,21 +278,23 @@ while running:
                 if select2_temp != select[2] and select[2] != None:
                     if default[select[1]][select[0]] == 0:
                         board[select[1]][select[0]] = select[2]
-                    print("sketched", select[2], "at", select[0:2])
 
-    # Main Menu
+    #Main Menu
     if game_state == 0:
+        #Main Menu Text
         screen.blit(title, (screen.get_width() / 2 - title.get_width() / 2, screen.get_height() / 4))
         screen.blit(difficulty_select,
                     (screen.get_width() / 2 - difficulty_select.get_width() / 2, screen.get_height() / 2))
+        
+        #Display Buttons
         for position in difficulty_positions:
             if mouse_in_button(mouse_pos, difficulty_positions, position):
                 screen.blit(difficulty_positions[position][1], difficulty_positions[position][0])
-                if event.type == pygame.MOUSEBUTTONUP:
+
+                #Button Functionality
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    #Generate board based on difficulty
                     difficulty = 0 if position == easy else 1 if position == medium else 2
-                    select = [4, 4, 0, False]
-                    print("selected", select[0:2])
-                    # board.select(4,4)
                     if difficulty == 1:
                         sg = SudokuGenerator(9, 40)
                         board = sg.generate_sudoku(9, 40)
@@ -296,6 +304,9 @@ while running:
                     elif difficulty == 2:
                         sg = SudokuGenerator(9, 50)
                         board = sg.generate_sudoku(9, 50)
+
+
+                    #Marks default cells as 1, marks empty cells as 0
                     default = []
                     for i in range(len(board)):
                         default.append([])
@@ -304,8 +315,9 @@ while running:
                                 default[i].append(1)
                             else:
                                 default[i].append(0)
-                    drawlines(board)
 
+                    #Changes game_state to in-game
+                    select = [4, 4, 0, False] #centers select as default
                     game_state = 1
 
             else:
@@ -313,8 +325,11 @@ while running:
 
     # In Game
     if game_state == 1:
+
         cord(mouse_pos)
         drawlines(board)
+
+        #Mouse hover and click functionality
         if (mouse_pos[0] > 0 and mouse_pos[1] > 0
                     and mouse_pos[0] < 540 and mouse_pos[1] < 540):
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -329,18 +344,23 @@ while running:
             highlightbox("red")
 
 
-        #Display bottom 3 buttons and functionality
+        #Display Bottom 3 Buttons
         pygame.draw.rect(screen, "gray", (0, screen.get_height() - 60, screen.get_width(), 60))
+
         for position in game_button_positions:
             if mouse_in_button(mouse_pos, game_button_positions, position):
                 screen.blit(game_button_positions[position][1], game_button_positions[position][0])
+
+                #Button functionality
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    # Press Reset
+
+                    # Press Reset (resets board's empty cells using data from default)
                     if position == reset:
                         for rowindex in range(len(board)):
                             for colindex in range(len(board[rowindex])):
                                 if default[rowindex][colindex] == 0 or default[rowindex][colindex] == 2:
                                     board[rowindex][colindex] = 0
+                                    default[rowindex][colindex] = 0
                                     select[3] = False
 
                     # Press Restart
