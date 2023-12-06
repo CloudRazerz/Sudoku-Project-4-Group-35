@@ -179,13 +179,12 @@ class SudokuGenerator:
     '''
     def valid_in_row(self, row, num):
         i = 0
-        j = 0
         for i in range(len(self.board_for_solver)):
-            for j in range(len(self.board_for_solver)):
-                if self.board_for_solver[row][j] == num:
-                    return True
-                else:
-                    return False
+            if self.board_for_solver[row][i] == num:
+                #print("yes row")
+                return True
+            else:
+                return False
                     
                         
     '''
@@ -200,13 +199,12 @@ class SudokuGenerator:
     '''
     def valid_in_col(self, col, num):
         i = 0
-        j = 0
         for i in range(len(self.board_for_solver)):
-            for j in range(len(self.board_for_solver)):
-                if self.board_for_solver[col][j] == num:
-                    return True
-                else:
-                    return False
+            if self.board_for_solver[i][col] == num:
+                #print("yes col")
+                return True
+            else:
+                return False
 
     '''
 	Determines if num is contained in the 3x3 box specified on the board
@@ -227,7 +225,8 @@ class SudokuGenerator:
             for j in range(3):
                 if self.board_for_solver[row_start+i][col_start+j] == num:
                     return False
-                else: return True
+                else: 
+                    return True
                 
     
     '''
@@ -352,6 +351,87 @@ class SudokuGenerator:
    
             self.board_for_user = self.board_for_solver
 
+    def fill_in_sudoku(self):
+        #loops = 0
+        zeros_found = -1
+        i = 0
+        j = 0
+        k = 1
+        backtrack = False
+        board_for_solver_copy = self.board_for_solver.copy()
+        num_zeros = sum(x.count(0) for x in self.board_for_solver)
+            #loops += 1
+            #if loops == 10:
+               #self.board_for_solver == board_for_solver_copy
+                #i += 1
+                #j += 1
+                #loops = 0
+        while True:
+            while i < self.row_length:
+                #print("while loop 1")
+                j = 0
+                while j < self.row_length:
+                    num_zeros = sum(x.count(0) for x in self.board_for_solver)
+                    if num_zeros == 0:
+                        return self.board_for_solver
+                    print(self.board_for_solver)
+                    #print("while loop 2")
+                    print(i,j)
+                    if self.board_for_solver[i][j] == 0:
+                        if backtrack == True:
+                            print("worked again")
+                            #self.board_for_solver[i][j] += 1
+                            backtrack = False
+                            #continue
+                        print(f"zero found at {i},{j}")
+                        #k = 1
+                        for k in range(self.row_length):
+                            #print("for loop 3")
+                            if self.valid_in_col(j,k) == True and self.valid_in_row(i,k) == True:
+                                #print("is_valid")
+                                
+                                #print(self.board_for_solver)
+                                self.board_for_solver[i][j] = k
+                                
+                                #test
+                                if self.board_for_solver[i][j] != board_for_solver_copy:
+                                    print("works")
+                                print(self.board_for_solver)
+                                break
+                            if k == self.row_length-1:
+                                backtrack = True
+                            
+                    if backtrack == False:
+                        j += 1
+                    else:
+                        j -= 1
+                    
+                    if j == -1:
+                        i -= 1
+                        if i == -1:
+                            i = self.row_length-1
+                        j = self.row_length-1
+                if backtrack == False:
+                    i += 1
+                else:
+                    i -= 1
+                
+                print("check")
+                if i == -1:
+                    i = self.row_length-1
+                elif i == 9:
+                    i = 0
+            
+                    
+                            
+                        
+                        
+                        
+            #print("Zeros found:", zeros_found)
+           
+        print(self.board_for_solver)
+        return self.board_for_solver
+        
 '''
 DO NOT CHANGE
 Provided for students
@@ -367,19 +447,19 @@ removed is the number of cells to clear (set to 0)
 
 Return: list[list] (a 2D Python list to represent the board)
 '''
+
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
-    
+    sudoku.fill_in_sudoku()
     #comment print board out when finished changing sudoku_generator.py
-    sudoku.print_board()
+    #sudoku.print_board()
     
     sudoku.fill_values()
     board = sudoku.get_board()
     sudoku.remove_cells()
     board = sudoku.get_board()
     return board
-
-    
+  
 
 "test functions"
 #SG = SudokuGenerator(2,2)
