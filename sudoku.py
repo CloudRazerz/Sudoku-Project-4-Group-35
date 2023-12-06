@@ -296,7 +296,7 @@ while running:
                     elif difficulty == 2:
                         sg = SudokuGenerator(9, 50)
                         board = sg.generate_sudoku(9, 50)
-                    sg = SudokuGenerator(9, 3)
+                    default = []
                     for i in range(len(board)):
                         default.append([])
                         for value in board[i]:
