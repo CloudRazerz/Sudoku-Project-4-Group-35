@@ -162,7 +162,7 @@ Return: None
                     num=self.randomGen(self.row_length)
                     if self.valid_in_box(row_start,col_start,num):
                         break
-                self.board[row_start+1][col_start+j] = num
+                self.board[row_start+i][col_start+j] = num
     def randomGen(self,num):
         return math.floor(random.random()*num +1)
     '''
