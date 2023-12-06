@@ -79,11 +79,44 @@ def mouse_in_button(mouse_pos, positions, position):
     else:
         return False
 
+
+def solvegame(board, i, j):
+    while board[i][j] != 0:
+        if i < 8:
+            i += 1
+        elif i == 8 and j < 8:
+            i = 0
+            j += 1
+        elif i == 8 and j == 8:
+            return True
+    pygame.event.pump()
+    for it in range(1, 10):
+        if  validvalue(board, i, j, it) == True:
+            defaultgrid[i][j] = it
+            global x, z
+            x = i
+            z = j
+            screen.fill((255, 255, 255))
+            drawlines()
+            highlightbox()
+            pygame.display.update()
+            pygame.time.delay(20)
+            if solvegame(defaultgrid, i, j) == 1:
+                return True
+            else:
+                defaultgrid[i][j] = 0
+            screen.fill((0, 0, 0))
+
+            drawlines()
+            highlightbox()
+            pygame.display.update()
+            pygame.time.delay(50)
+    return False
 def drawlines(board):
     screen.fill("black")
-    for i in range (9):
-        for j in range (9):
-            if board[i][j]!= 0:
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] != 0:
 
                 pygame.draw.rect(screen, "black", (i * diff, j * diff, diff + 1, diff + 1))
                 text1 = sub_font.render(str(board[i][j]), 1, (0,255,0))
@@ -103,12 +136,16 @@ def cord(pos):
     global z
     z = pos[1]//diff
 
-def fillvalue(value):
-    text1 = sub_font.render(str(value), 1, (0, 255, 0))
+def fillvalue(value,sketch=True):
+    if sketch:
+        text1 = sub_font.render(str(value), 1, (0, 255, 0))
+    else:
+        text1 = sub_font.render(str(value), 1, (0, 255, 255))
     screen.blit(text1, (x * diff + 15, z * diff + 15))
 
 def highlightbox():
     for k in range(2):
+        #print("x" + str(x))
         pygame.draw.line(screen, (0, 0, 0), (x * diff - 3, (z + k) * diff), (x * diff + diff + 3, (z + k) * diff), 7)
         pygame.draw.line(screen, (0, 0, 0), ((x + k) * diff, z * diff), ((x + k) * diff, z * diff + diff), 7)
     # Game Loop
@@ -146,7 +183,9 @@ while running:
                     if select[2] != None:
                         # board.place_number(select[2])
                         print("confirmed", select[2], "at", select[0:2])
-                        fillvalue(select[2])
+
+                        fillvalue(select[2],True)
+
                         # if board.is_full():
                         #    if board.check_board():
                         #        game_state = 3
@@ -175,7 +214,8 @@ while running:
                 if select2_temp != select[2] and select[2] != None:
                     # board.sketch(select[2])
                     print("sketched", select[2], "at", select[0:2])
-                    fillvalue(select[2])
+                    fillvalue(select[2],False)
+                    select[2] = None
 
     # Main Menu
     if game_state == 0:
@@ -193,6 +233,7 @@ while running:
                     # board.select(4,4)
                     if difficulty == 1:
                         sg = SudokuGenerator(9, 40)
+
                         board = sg.generate_sudoku(9, 40)
                         #print("Pringing board" + str(board))
 
@@ -246,8 +287,9 @@ while running:
                 #    select[0] = board.click(mouse_pos[0], mouse_pos[1])[0]
                 #    select[1] = board.click(mouse_pos[0], mouse_pos[1])[1]
                 #    select[2] = None
-                pass
-
+                #pass
+        if select[2] is None:
+            highlightbox()
     # Game Over
     if game_state == 2:
         screen.blit(game_over, (screen.get_width() / 2 - game_over.get_width() / 2, screen.get_height() / 4))
@@ -267,8 +309,7 @@ while running:
                 running = False
         else:
             screen.blit(exit_alt, won_positions[exit_alt][0])
-    if select[2] is None:
-        highlightbox()
+
     pygame.display.update()
     #pygame.display.flip()
 
