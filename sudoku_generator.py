@@ -374,7 +374,6 @@ class SudokuGenerator:
 
     def fill_in_sudoku(self):
         #loops = 0
-        zeros_found = -1
         i = 0
         j = 0
         k = 1
@@ -468,12 +467,6 @@ removed is the number of cells to clear (set to 0)
 
 Return: list[list] (a 2D Python list to represent the board)
 '''
-
-def generate_sudoku(size, removed):
-    sudoku = SudokuGenerator(size, removed)
-    sudoku.fill_in_sudoku()
-    #comment print board out when finished changing sudoku_generator.py
-    #sudoku.print_board()
 
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
