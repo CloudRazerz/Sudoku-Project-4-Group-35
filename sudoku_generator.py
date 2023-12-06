@@ -34,7 +34,7 @@ None
         rand_num_row = []
         rand_num_col = []
         self.removed_cells_copy = removed_cells
-        self.board_for_solver= [[0 for _ in range(self.row_length)] for _ in range(self.row_length)]
+        self.board= [[0 for _ in range(self.row_length)] for _ in range(self.row_length)]
 
 
     '''
@@ -45,7 +45,7 @@ Return: list[list]
     '''
 
     def get_board(self):
-        return self.board_for_solver
+        return self.board
 
     '''
 Displays the board to the console
@@ -56,7 +56,7 @@ Return: None
     '''
 
     def print_board(self):
-        print(self.board_for_solver)
+        print(self.board)
 
     '''
 Determines if num is contained in the specified row (horizontal) of the board
@@ -72,9 +72,9 @@ Return: boolean
     def valid_in_row(self, row, num):
         i = 0
         #print("numum" + str(num) + " row " + str(row))
-        for i in range(len(self.board_for_solver)):
-            if self.board_for_solver[row][i] == num:
-                #print("yes row " + str(self.board_for_solver[row][i]))
+        for i in range(len(self.board)):
+            if self.board[row][i] == num:
+                #print("yes row " + str(self.board[row][i]))
                 return False
             #else:
              #   return False
@@ -94,13 +94,13 @@ Return: boolean
 
     def valid_in_col(self, col, num):
         i = 0
-        for i in range(len(self.board_for_solver)):
-            if self.board_for_solver[i][col] == num:
+        for i in range(len(self.board)):
+            if self.board[i][col] == num:
                 #print("yes col")
                 return False
             #else:
              #   return True
-        print("no col")
+        #print("no col")
         return True
 
     '''
@@ -121,7 +121,7 @@ Return: boolean
         j = 0
         for i in range(self.box_length):
             for j in range(self.box_length):
-                if self.board_for_solver[int(row_start + i)][int(col_start + j)] == num:
+                if self.board[int(row_start + i)][int(col_start + j)] == num:
                     return False
                 #else:
                  #   return True
@@ -162,7 +162,7 @@ Return: None
                     num=self.randomGen(self.row_length)
                     if self.valid_in_box(row_start,col_start,num):
                         break
-                self.board_for_solver[row_start+1][col_start+j] = num
+                self.board[row_start+1][col_start+j] = num
     def randomGen(self,num):
         return math.floor(random.random()*num +1)
     '''
@@ -210,10 +210,10 @@ boolean (whether or not we could solve the board)
 
         for num in range(1, self.row_length + 1):
             if self.is_valid(row, col, num):
-                self.board_for_solver[row][col] = num
+                self.board[row][col] = num
                 if self.fill_remaining(row, col + 1):
                     return True
-                self.board_for_solver[row][col] = 0
+                self.board[row][col] = 0
         return False
 
     def generate_sudoku(self, size, removed):
@@ -238,7 +238,8 @@ Return: None
 
     def fill_values(self):
         self.fill_diagonal()
-        self.fill_remaining(0, self.box_length)
+        if (self.fill_remaining(0, self.box_length)):
+            self.board_copy = self.board
 
     '''
     Removes the appropriate number of cells from the board
@@ -256,22 +257,22 @@ Return: None
     def remove_cells(self):
         ##remove cells
         # print(self.removed_cells)
-        for i in range(self.removed_cells_copy - sum(x.count(0) for x in self.board_for_solver)):
+        for i in range(self.removed_cells_copy - sum(x.count(0) for x in self.board)):
             rand_num1 = random.randrange(0, self.row_length)
             rand_num2 = random.randrange(0, self.row_length)
 
             # only remove cell if it has not already been removed
-            while self.board_for_solver[rand_num1][rand_num2] == 0:
+            while self.board[rand_num1][rand_num2] == 0:
                 rand_num1 = random.randrange(0, self.row_length)
                 rand_num2 = random.randrange(0, self.row_length)
-                if self.board_for_solver[rand_num1][rand_num2] != 0:
-                    self.board_for_solver[rand_num1][rand_num2] = 0
+                if self.board[rand_num1][rand_num2] != 0:
+                    self.board[rand_num1][rand_num2] = 0
                     break
             else:
-                self.board_for_solver[rand_num1][rand_num2] = 0
+                self.board[rand_num1][rand_num2] = 0
                 # print("Popped location:", rand_num1, rand_num2)
 
-            self.board_for_user = self.board_for_solver
+            self.board_for_user = self.board
 #fill
     def fill_in_sudoku(self):
         # loops = 0
@@ -279,11 +280,11 @@ Return: None
         j = 0
         # k = 1
         backtrack = False
-        board_for_solver_copy = self.board_for_solver.copy()
-        num_zeros = sum(x.count(0) for x in self.board_for_solver)
+        board_for_solver_copy = self.board.copy()
+        num_zeros = sum(x.count(0) for x in self.board)
         # loops += 1
         # if loops == 10:
-        # self.board_for_solver == board_for_solver_copy
+        # self.board == board_for_solver_copy
         # i += 1
         # j += 1
         # loops = 0
@@ -292,17 +293,17 @@ Return: None
                 # print("while loop 1")
                 j = 0
                 while j < self.row_length:
-                    num_zeros = sum(x.count(0) for x in self.board_for_solver)
+                    num_zeros = sum(x.count(0) for x in self.board)
                     print("numzero" + str(num_zeros))
                     if num_zeros == 0:
-                        return self.board_for_solver
-                    print(self.board_for_solver)
+                        return self.board
+                    print(self.board)
                     # print("while loop 2")
                     print(i, j)
-                    if self.board_for_solver[i][j] == 0:
+                    if self.board[i][j] == 0:
                         if backtrack:
                             print("worked again")
-                            # self.board_for_solver[i][j] += 1
+                            # self.board[i][j] += 1
                             backtrack = False
                             # continue
                         print(f"zero found at {i},{j}")
@@ -316,13 +317,13 @@ Return: None
                                     print("valid row")
                                     # print("is_valid")
 
-                                    print("self.board_for_solver")
-                                    self.board_for_solver[i][j] = k
+                                    print("self.board")
+                                    self.board[i][j] = k
                                    # break
                                 # test
-                               # if self.board_for_solver[i][j] != board_for_solver_copy:
+                               # if self.board[i][j] != board_for_solver_copy:
                                 #    print("works")
-                                    print( "new board " + str(self.board_for_solver))
+                                    print( "new board " + str(self.board))
                                     break
                             #if k == self.row_length - 1:
                              #   backtrack = True
@@ -350,7 +351,7 @@ Return: None
 
             # print("Zeros found:", zeros_found)
 
-        print(self.board_for_solver)
+        print(self.board)
 
 
 '''
