@@ -376,7 +376,7 @@ class SudokuGenerator:
         #loops = 0
         i = 0
         j = 0
-        k = 1
+        #k = 1
         backtrack = False
         board_for_solver_copy = self.board_for_solver.copy()
         num_zeros = sum(x.count(0) for x in self.board_for_solver)
@@ -404,7 +404,7 @@ class SudokuGenerator:
                             backtrack = False
                             #continue
                         print(f"zero found at {i},{j}")
-                        #k = 1
+                        k = 1
                         for k in range(self.row_length):
                             #print("for loop 3")
                             if self.valid_in_col(j,k) == True and self.valid_in_row(i,k) == True:
@@ -450,7 +450,6 @@ class SudokuGenerator:
             #print("Zeros found:", zeros_found)
            
         print(self.board_for_solver)
-        return self.board_for_solver
         
 '''
 DO NOT CHANGE
@@ -470,6 +469,7 @@ Return: list[list] (a 2D Python list to represent the board)
 
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
+    sudoku.fill_in_sudoku()
 
     # comment print board out when finished changing sudoku_generator.py
     sudoku.print_board()
