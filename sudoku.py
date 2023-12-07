@@ -336,7 +336,7 @@ while running:
                 select[3] = False
                 select[0] = z
                 select[1] = x
-                select[2] = 0
+                select[2] = board[select[1]][select[0]]
                 select[3] = True
         if not select[3]:
             highlightbox("black")
